@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
-import prisma from '@/lib/prisma';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
 export async function DELETE(
     req: Request,
-    { params }: { params: { projectId: string } }
+    { params }: { params: Promise<{ projectId: string }> }
 ) {
     try {
+        const { projectId } = await params;
         const session = await getServerSession(authOptions);
 
         if (!session?.user?.email) {
@@ -23,7 +24,7 @@ export async function DELETE(
         }
 
         const project = await prisma.project.findUnique({
-            where: { id: params.projectId },
+            where: { id: projectId },
         });
 
         if (!project || project.userId !== user.id) {
@@ -31,7 +32,7 @@ export async function DELETE(
         }
 
         await prisma.project.delete({
-            where: { id: params.projectId },
+            where: { id: projectId },
         });
 
         return new NextResponse('OK', { status: 200 });

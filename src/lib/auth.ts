@@ -2,7 +2,7 @@ import { NextAuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 // Helper function to check if database is available
