@@ -7,8 +7,9 @@ import { prisma } from '@/lib/prisma';
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
+    const userId = session?.user?.id;
 
-    if (!session) {
+    if (!session || !userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -16,7 +17,7 @@ export async function GET() {
     }
 
     const projects = await prisma.project.findMany({
-      where: { userId: session.user.id },
+      where: { userId },
       orderBy: { createdAt: 'desc' },
     });
 
