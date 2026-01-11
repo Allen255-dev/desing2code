@@ -1,14 +1,16 @@
-// src/app/api/projects/route.ts - CORRECT VERSION
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { auth } from '@/auth'; // Use auth() instead of getServerSession()
 import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
+    // Use auth() instead of getServerSession()
+    const session = await auth();
+    
+    // Get userId from session
     const userId = session?.user?.id;
 
+    // Check authorization
     if (!session || !userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -16,6 +18,7 @@ export async function GET() {
       );
     }
 
+    // Fetch projects
     const projects = await prisma.project.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },

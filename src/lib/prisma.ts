@@ -30,7 +30,11 @@ const prismaClientSingleton = () => {
         // For Prisma Accelerate / Data Proxy URLs (e.g. prisma+postgres://)
         console.log('[Prisma] Initializing with accelerateUrl');
         return new PrismaClient({
-            accelerateUrl: url,
+            datasources: {
+                db: {
+                    url: url,
+                },
+            },
             log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
         });
     } catch (error) {
