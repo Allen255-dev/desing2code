@@ -1,16 +1,13 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/auth'; // Use auth() instead of getServerSession()
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/auth';  // Use your auth.ts file
 import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    // Use auth() instead of getServerSession()
-    const session = await auth();
-    
-    // Get userId from session
+    const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
 
-    // Check authorization
     if (!session || !userId) {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -18,7 +15,6 @@ export async function GET() {
       );
     }
 
-    // Fetch projects
     const projects = await prisma.project.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
